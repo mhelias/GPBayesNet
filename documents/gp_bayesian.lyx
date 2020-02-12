@@ -1,0 +1,876 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\N}{\mathcal{N}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\T}{\mathrm{T}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\D}{\mathcal{D}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\th}{\tilde{h}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tj}{\tilde{j}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tx}{\tilde{x}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+Gaussian-process Bayesian inference in a recurrent network
+\end_layout
+
+\begin_layout Author
+Moritz Helias
+\end_layout
+
+\begin_layout Abstract
+These notes contain a field-theoretical formulation of Lee et al.
+ 2018 and some details of the calculation for the Bayesian inference.
+\end_layout
+
+\begin_layout Section
+Path-integral formulation of network dynamics
+\end_layout
+
+\begin_layout Standard
+Network dynamics of a network of 
+\begin_inset Formula $i=1,\ldots,N$
+\end_inset
+
+ neurons
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align}
+h_{i}(t+t) & =\sum_{j}w_{ij}\phi(x_{j}(t))-\tilde{j}_{i}(t),\label{eq:input_h}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $\phi=\tanh$
+\end_inset
+
+ is the gain function and 
+\begin_inset Formula $-\tj$
+\end_inset
+
+ is an input supplied to the network.
+ We write as generating functional for the moments of the input
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+Z[j](w) & =\int\D h\,\delta\big[h(\circ+1)-w\phi(h(\circ))+\tj(\circ)\big]\,\exp(j^{\T}h),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\circ$
+\end_inset
+
+ stands for the time argument of the functions and 
+\begin_inset Formula $[w\phi(h(\circ))]_{i}=\sum_{j}w_{ij}\phi(x_{j}(\circ))$
+\end_inset
+
+ is to be understood element-wise.
+\end_layout
+
+\begin_layout Standard
+Introduce auxiliary fields for express the Dirac-
+\begin_inset Formula $\delta$
+\end_inset
+
+ as by its Fourier transform
+\begin_inset Formula 
+\begin{align*}
+\delta[h] & =\int\D\th\,\exp\big(\th^{\T}h\big)
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula $\int\D\th=\prod_{t}\int_{-i\infty}^{i\infty}\frac{d\th(t)}{2\pi i}$
+\end_inset
+
+ and 
+\begin_inset Formula $\th^{\T}h=\sum_{i,t}\th_{i}(t)h_{i}(t)$
+\end_inset
+
+ is the inner product over units and time.
+ Then 
+\begin_inset Formula $Z$
+\end_inset
+
+ takes the form
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+Z[j](w) & =\int\D h\,\int\D\th\,\exp\big(\th^{\T}\big[h-w\phi(h)\big)\big]+j^{\T}h+\tj^{\T}\th\big).
+\end{align*}
+
+\end_inset
+
+So the input 
+\begin_inset Formula $\tj$
+\end_inset
+
+ formally plays the role
+\end_layout
+
+\begin_layout Standard
+The output of the network will be 
+\begin_inset Formula $h(T)$
+\end_inset
+
+ at some time 
+\begin_inset Formula $T$
+\end_inset
+
+.
+ We are interested in the distribution of this output taken over weights
+ 
+\begin_inset Formula $w$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Disorder average over 
+\begin_inset Formula $w\sim\N(0,\frac{g^{2}}{N})$
+\end_inset
+
+ yields (using Hubbard-Stratonovich / Gaussian identity 
+\begin_inset Formula $\frac{1}{\sqrt{2\pi}}\int e^{-\frac{1}{2}y^{2}+xy}=e^{\frac{1}{2}x^{2}}$
+\end_inset
+
+)
+\begin_inset Formula 
+\begin{align*}
+\langle\exp\big(\th^{\T}w\phi(h)\big)\rangle_{J} & =\exp\big(\frac{g^{2}}{2N}\,\sum_{i,j,t,t^{\prime}}\th_{i}(t)\th_{i}(t^{\prime})\,\phi(h_{j}(t))\phi(h_{j}(t^{\prime}))\big)\\
+ & =\exp\big(\frac{g^{2}}{2N}\,\sum_{t,t^{\prime}}\sum_{i}\th_{i}(t)\th_{i}(t^{\prime})\,\sum_{j}\phi(h_{j}(t))\phi(h_{j}(t^{\prime}))\big),
+\end{align*}
+
+\end_inset
+
+where the appearance of sums over all units show that after the average
+ the units become all statistically identical.
+\end_layout
+
+\begin_layout Standard
+Introducing auxiliary field 
+\begin_inset Formula 
+\begin{align*}
+Q_{1}(t,t^{\prime}) & :=\frac{g^{2}}{N}\,\sum_{j}\phi(h_{j}(t))\phi(h_{j}(t^{\prime}))
+\end{align*}
+
+\end_inset
+
+and helping field 
+\begin_inset Formula $Q_{2}$
+\end_inset
+
+ to express latter constraint, we get
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\langle Z[j,\tj](w)\rangle_{w} & =\int\D Q_{1}\int\D Q_{2}\,\exp\big(-\frac{N}{g^{2}}Q_{1}^{\T}Q_{2}\\
+ & \times\int\D h\,\int\D\th\,\exp\big(\th^{\T}h+\frac{1}{2}\th^{\T}Q_{1}\th+\phi(h)^{\T}Q_{2}\phi(h)+j^{\T}h+\tj^{\T}\th\big).
+\end{align*}
+
+\end_inset
+
+Latter line factorizes in the unit index, so we get the same integral to
+ the power of 
+\begin_inset Formula $N$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\langle Z[j,\tj](w)\rangle_{w} & =\int\D Q_{1}\int\D Q_{2}\,\exp\big(-\frac{N}{g^{2}}Q_{1}^{\T}Q_{2}+N\,\Omega(Q_{1},Q_{2},j,\tj)\big),\\
+\Omega(Q_{1},Q_{2},j,\tj) & :=\ln\,\int\D h_{1}\,\int\D\th_{1}\,\\
+ & \times\exp\big(\th_{1}^{\T}h_{1}+\frac{1}{2}\th_{1}^{\T}Q_{1}\th_{1}+\phi(h_{1})^{\T}Q_{2}\phi(h_{1})+j_{1}^{\T}h_{1}+\tj_{1}^{\T}\th_{1}\big),
+\end{align*}
+
+\end_inset
+
+where the latter integral is only over a scalar field 
+\begin_inset Formula $h_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\th_{1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We perform a saddle-point approximation in 
+\begin_inset Formula $Q_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $Q_{2}$
+\end_inset
+
+ to obtain the stationarity equations
+\begin_inset Formula 
+\begin{align*}
+0 & \stackrel{!}{=}\frac{\delta}{\delta Q_{1}}\big(-\frac{N}{g^{2}}Q_{1}^{\T}Q_{2}+N\,\Omega(Q_{1},Q_{2})\big)\quad\rightarrow\quad Q_{2}^{\ast}(t,t^{\prime})=\frac{1}{2}\langle\th_{1}(t)\th_{1}(t^{\prime})\rangle\equiv0,\\
+0 & \stackrel{!}{=}\frac{\delta}{\delta Q_{2}}\big(-\frac{N}{g^{2}}Q_{1}^{\T}Q_{2}+N\,\Omega(Q_{1},Q_{2})\big)\quad\rightarrow\quad Q_{1}^{\ast}(t,t^{\prime})=g^{2}\langle\phi(h_{1}(t))\phi(h_{1}(t^{\prime}))\rangle,
+\end{align*}
+
+\end_inset
+
+where the latter expectation value is with regard to the action 
+\begin_inset Formula $\Omega(Q_{1}^{\ast},Q_{2}^{\ast})$
+\end_inset
+
+.
+ The saddle point value of 
+\begin_inset Formula $Q_{2}$
+\end_inset
+
+ vanishes by the normalization condition.
+\end_layout
+
+\begin_layout Standard
+Because at the saddle point 
+\begin_inset Formula $\Omega(Q_{1}^{\ast},0)$
+\end_inset
+
+ describes Gaussian statistics of the 
+\begin_inset Formula $h$
+\end_inset
+
+.
+ This can be seen by performing the integral over 
+\begin_inset Formula $\th$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\int\D\th_{1}\,\exp\big(\th_{1}^{\T}h_{1}+\frac{1}{2}\th_{1}^{\T}Q_{1}\th_{1}\big)= & \exp\big(-\frac{1}{2}h^{\T}Q_{1}^{-1}h\big),
+\end{align*}
+
+\end_inset
+
+we have that the latter saddle point equation is an double integral over
+ jointly Gaussian distributed 
+\begin_inset Formula $h_{1}(t)$
+\end_inset
+
+ and 
+\begin_inset Formula $h_{1}(t^{\prime})$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+Q_{1}^{\ast}(t,t^{\prime})= & g^{2}\,\langle\phi(h_{1}(t))\,\phi(h_{1}(t^{\prime}))\rangle.
+\end{align*}
+
+\end_inset
+
+We need the time-evolution of
+\begin_inset Formula 
+\begin{align*}
+q(t) & :=Q_{1}^{\ast}(t,t)=g^{2}\,\langle\phi(h_{1})\,\phi(h_{1})\rangle\\
+ & =g^{2}\,\langle\phi(h)\phi(h)\rangle_{h_{1}\sim\N\Big(0,q(t-1)\Big)}.
+\end{align*}
+
+\end_inset
+
+The input 
+\begin_inset Formula $x$
+\end_inset
+
+ is applied in the first time step 
+\begin_inset Formula $t=0$
+\end_inset
+
+ by setting
+\begin_inset Formula 
+\begin{align*}
+\tj(0) & =-x.
+\end{align*}
+
+\end_inset
+
+By 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:input_h"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ this sets the input to the initial values, where we assume that 
+\begin_inset Formula $x(t<0)=0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We thus need to compute the iteration
+\begin_inset Formula 
+\begin{align*}
+\text{for }t=1:\quad q(t+1) & =\begin{cases}
+g^{2}\,\phi(x)\phi(x) & \text{for }t=0\\
+g^{2}\,\langle\phi(h)\phi(h)\rangle_{h\sim\N(0,q(t))} & \text{for }t>0
+\end{cases}.
+\end{align*}
+
+\end_inset
+
+The output 
+\begin_inset Formula $y$
+\end_inset
+
+ of the network if then given by 
+\begin_inset Formula $y=h(T)$
+\end_inset
+
+ for some time point 
+\begin_inset Formula $T$
+\end_inset
+
+.
+ So the mapping of an input 
+\begin_inset Formula $x$
+\end_inset
+
+ to the output 
+\begin_inset Formula $y$
+\end_inset
+
+ can be written as
+\begin_inset Formula 
+\begin{align*}
+y & =f_{w}(x),\\
+\text{where }y & :=h(T)\text{ for }h(0)=x.
+\end{align*}
+
+\end_inset
+
+The distribution of outputs over the realization of the random connections
+ is a Gaussian
+\begin_inset Formula 
+\begin{align*}
+\int p(y|w,x)\,p(w)\,dw & =\N(0,q(T)).
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\langle y_{i}\rangle & =0\\
+\langle y_{i}y_{j}\rangle & =\langle h_{i}(T)h_{j}(T)\rangle=\delta_{ij}\,q(T).
+\end{align*}
+
+\end_inset
+
+Likewise, we define the joint distribution for two different inputs
+\begin_inset Formula 
+\begin{align*}
+p(y,y^{\prime}|x,x^{\prime}) & =\N(0,K_{xx^{\prime}}(T)),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $K_{xx^{\prime}}(t)$
+\end_inset
+
+ satisfies the recurrence relation
+\begin_inset Formula 
+\begin{align}
+K_{xx^{\prime}}(t+1) & =\begin{cases}
+g^{2}\phi(x)\phi(x^{\prime}) & \text{for }t=0\\
+g^{2}\langle\phi(h)\phi(h)\rangle_{h\sim\N(0,K_{xx^{\prime}}(t))} & \text{for }t>0
+\end{cases}.\label{eq:iteration_different_inputs}
+\end{align}
+
+\end_inset
+
+This iteration can be derived from the replica calculation, starting from
+ the moment-generating function 
+\begin_inset Formula 
+\begin{align*}
+Z[j^{(1)},j^{(2)}](w) & =\int\D h^{(1)}\,\int\D h^{(2)}\,\delta\big[h^{(1)}(\circ+1)-w\phi(h^{(1)}(\circ))+\tj^{(1)}(\circ)\big]\\
+ & \times\,\delta\big[h^{(2)}(\circ+1)-w\phi(h^{(2)}(\circ))+\tj^{(2)}(\circ)\big]\\
+ & \exp(j^{(1)\T}h^{(1)}+j^{(2)\T}h^{(2)}),
+\end{align*}
+
+\end_inset
+
+which describes a pair of systems with identical connectivity 
+\begin_inset Formula $w$
+\end_inset
+
+ but different inputs 
+\begin_inset Formula $\tj^{(1)}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tj^{(2)}$
+\end_inset
+
+.
+ Similar steps as outlined above (disorder average, saddle point approximation)
+ then yield 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:iteration_different_inputs"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Bayesian prediction for output
+\end_layout
+
+\begin_layout Standard
+Assume we have an input-output mapping 
+\begin_inset Formula $y=f_{w}(x)$
+\end_inset
+
+, where 
+\begin_inset Formula $w$
+\end_inset
+
+ are the weights to be trained, 
+\begin_inset Formula $x$
+\end_inset
+
+ is the input to the network and 
+\begin_inset Formula $y$
+\end_inset
+
+ its output.
+ We have training data 
+\begin_inset Formula $(x_{D},y_{D})$
+\end_inset
+
+ consisting of inputs 
+\begin_inset Formula $x_{D}$
+\end_inset
+
+ and outputs 
+\begin_inset Formula $y_{D}$
+\end_inset
+
+.
+ The prior distribution of the weights is 
+\begin_inset Formula $p(w)$
+\end_inset
+
+.
+ This represents some knowledge we may have about the physical range of
+ these parameters; for example they should not be arbitrarily large.
+ Then Bayes theorem states
+\begin_inset Formula 
+\begin{align}
+p(y|w)\,p(w) & =p(w|y)\,p(y)\nonumber \\
+p(w|y) & =p(y|w)\,\frac{p(w)}{p(y)}.\label{eq:p_weight_given_training}
+\end{align}
+
+\end_inset
+
+The latter is the distribution of the weights that we have after having
+ presented the training data 
+\begin_inset Formula $y$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The distribution of outputs given the weights is 
+\begin_inset Formula 
+\begin{align*}
+p(y|w) & =\delta(y-f_{w}(x)).
+\end{align*}
+
+\end_inset
+
+The distribution of the output 
+\begin_inset Formula $y_{\ast}$
+\end_inset
+
+ for a new input 
+\begin_inset Formula $x_{\ast}$
+\end_inset
+
+ is
+\begin_inset Formula 
+\begin{align}
+p(y_{\ast}|y) & =\int p(w|y)\,\delta(y_{\ast}-f_{w}(x_{\ast}))\,dw\label{eq:p_y_star_given_y}\\
+ & =\frac{1}{p(y)}\,\int\delta(y-f_{w}(x))\,\delta(y_{\ast}-f_{w}(x_{\ast}))\,p(w)\,dw.\nonumber 
+\end{align}
+
+\end_inset
+
+But the latter integral is just the joint distribution of the output for
+ the training data and the test point
+\begin_inset Formula 
+\begin{align*}
+p(y_{\ast},y|x^{\ast},x) & =\int\,\delta(y_{\ast}-f_{w}(x_{\ast}))\,\delta(y-f_{w}(x))\,p(w)\,dw.
+\end{align*}
+
+\end_inset
+
+If this distribution is Gaussian, namely if
+\begin_inset Formula 
+\begin{align*}
+p(y,y^{\ast}) & =\N(0,K)\\
+K & =\left(\begin{array}{cc}
+K_{DD} & K_{D\ast}\\
+K_{\ast D} & K_{\ast\ast}
+\end{array}\right)
+\end{align*}
+
+\end_inset
+
+the distribution 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:p_y_star_given_y"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ is Gaussian, too, namely
+\begin_inset Formula 
+\begin{align*}
+p(y,y^{\ast}) & =N\,\exp\Big(-\frac{1}{2}(y,y_{\ast})^{\T}K^{-1}(y,y^{\ast})\Big).
+\end{align*}
+
+\end_inset
+
+The inverse matrix 
+\begin_inset Formula $K^{-1}$
+\end_inset
+
+ is (see e.g.
+ https://en.wikipedia.org/wiki/Block_matrix; here we mixed both representations
+ that are given there)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+K^{-1} & =\left(\begin{array}{cc}
+(K_{DD}-K_{D\ast}K_{\ast\ast}^{-1}K_{\ast D})^{-1} & -K_{DD}^{-1}K_{D\ast}(K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast})^{-1}\\
+-(K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast})^{-1}K_{\ast D}K_{DD}^{-1} & (K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast})^{-1}
+\end{array}\right).
+\end{align*}
+
+\end_inset
+
+By inserting 
+\begin_inset Formula $y$
+\end_inset
+
+, the 
+\begin_inset Formula $y^{\ast}$
+\end_inset
+
+-dependent part of the density is hence also Gaussian, namely
+\begin_inset Formula 
+\begin{align*}
+ & \propto\exp\Big(-\frac{1}{2}y^{\ast\T}(K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast})^{-1}y^{\ast}\\
+ & +\frac{1}{2}y^{\ast\T}\,(K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast})^{-1}K_{\ast D}K_{DD}^{-1}\,y+\frac{1}{2}y^{\T}\,K_{DD}^{-1}K_{D\ast}(K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast})^{-1}\,y^{\ast}\Big)\\
+\\
+ & =\exp\Big(-\frac{1}{2}(y^{\ast\T}-K_{\ast D}K_{DD}^{-1}y)\,(K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast})^{-1}(y^{\ast}-K_{\ast D}K_{DD}^{-1}y)\Big)\,f(y).
+\end{align*}
+
+\end_inset
+
+So we read off the mean and variance from the last line as (similar as in
+ Lee 2017, eq.
+ (8), (9); they have some readout noise in addition)
+\begin_inset Formula 
+\begin{align*}
+\mu_{y^{\ast}} & =K_{\ast D}K_{DD}^{-1}y,\\
+\sigma_{y^{\ast}}^{2} & =(K^{-1})_{\ast\ast}^{-1}=K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast}.
+\end{align*}
+
+\end_inset
+
+These expressions yield the mean output 
+\begin_inset Formula $\langle y_{\ast}\rangle=\mu_{y_{\ast}}$
+\end_inset
+
+ and its uncertainty 
+\begin_inset Formula $\sigma_{y_{\ast}}^{2}$
+\end_inset
+
+, both for input 
+\begin_inset Formula $x_{\ast}$
+\end_inset
+
+.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Including a readout noise
+\end_layout
+
+\begin_layout Plain Layout
+If we have a model for the readout noise, say 
+\begin_inset Formula $p_{n}(t|y)=\N(0,\sigma,t-y)$
+\end_inset
+
+ a normal distribution, we need to compute instead of 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:p_y_star_given_y"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+p(y_{\ast}|t) & =\frac{1}{p(t)}\,\int p(y^{\ast},y|x^{\ast},x)\,p(y|t)\,dy.
+\end{align*}
+
+\end_inset
+
+The latter integral can also be written with help of the moment-generating
+ function of the Gaussian 
+\begin_inset Formula $Z_{n}(j|t)=\exp\big(j\,t+\frac{1}{2}\sigma^{2}j^{2}\big)$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+ & \int\int p(y^{\ast},y|x^{\ast},x)\,\exp\big(-y^{\T}j+j^{\T}t\,+\frac{1}{2}j^{\T}\sigma^{2}j\big)\,dy\,dj\\
+= & \int Z(y^{\ast},-j|x^{\ast},x)\,\exp\big(j\,t\,+\frac{1}{2}\sigma^{2}j^{2}\big)\,dj,
+\end{align*}
+
+\end_inset
+
+where we performed the integral over 
+\begin_inset Formula $y$
+\end_inset
+
+.
+ Correspondingly, one can perform the integral over 
+\begin_inset Formula $y_{\ast}$
+\end_inset
+
+ with a factor 
+\begin_inset Formula $\exp(j_{\ast}y_{\ast})$
+\end_inset
+
+ to get the joint moment-generating function for 
+\begin_inset Formula $y$
+\end_inset
+
+ and 
+\begin_inset Formula $y_{\ast}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Questions
+\end_layout
+
+\begin_layout Itemize
+Plan: start with simple example of Bayesian inference e.g.
+ applied to linear regression 
+\begin_inset Formula $y=m\,x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+It is known that the network transitions to chaos at the point where 
+\begin_inset Formula $g^{2}=1$
+\end_inset
+
+.
+ Is this point particularly good for computation? 
+\end_layout
+
+\begin_layout Itemize
+How does performance depend on the time 
+\begin_inset Formula $T$
+\end_inset
+
+ (depth of signal propagation) within which the network processes the input?
+\end_layout
+
+\begin_layout Itemize
+How do the networks perform if the units are noisy?
+\end_layout
+
+\begin_layout Itemize
+What is the distribution of weights after training? It can be computed from
+ 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:p_weight_given_training"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Extensions
+\end_layout
+
+\begin_layout Itemize
+Temporal dynamics 
+\begin_inset Formula $\partial_{t}x+x=h$
+\end_inset
+
+ leads to dynamics MFT
+\end_layout
+
+\begin_layout Itemize
+networks with small width; non-Gaussian corrections, can be treated dagrammatica
+lly
+\end_layout
+
+\begin_layout Itemize
+fluctuations of the saddle point fields: implies pairwise correlations among
+ the units
+\end_layout
+
+\end_body
+\end_document
