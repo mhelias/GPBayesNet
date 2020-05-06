@@ -1,0 +1,288 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\N}{\mathcal{N}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Linear regression as Bayesian inference
+\end_layout
+
+\begin_layout Standard
+Consider a linear model of some data 
+\begin_inset Formula $x_{i}\in\mathbb{R}$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+y_{i} & =m\,x_{i}+\epsilon_{i},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\epsilon_{i}$
+\end_inset
+
+ is assumed to be an independently and identically distributed (i.i.d.) Gaussian
+ error.
+ Conversely, we can say that a model of the data is described by the normal
+ distribution
+\begin_inset Formula 
+\begin{align*}
+p(y_{i}|x_{i},m) & =\N(y_{i};\,m\,x_{i},\sigma^{2})=\frac{1}{\sqrt{2\pi}\sigma}\,\exp\big(-\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big).
+\end{align*}
+
+\end_inset
+
+The joint distribution of all points, due to the i.i.d.
+ assumption of the errors 
+\begin_inset Formula $\epsilon_{i}$
+\end_inset
+
+, is then just the product of these distributions for each 
+\begin_inset Formula $\epsilon_{i}$
+\end_inset
+
+, so
+\begin_inset Formula 
+\begin{align*}
+p(y|x,m) & =\prod_{i=1}^{n}\,p(y_{i}|x_{i},m)\\
+ & =\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,\exp\big(-\sum_{i=1}^{n}\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big).
+\end{align*}
+
+\end_inset
+
+Given pairs of data points 
+\begin_inset Formula $(x_{i},y_{i})_{1\le i\le n}$
+\end_inset
+
+, what is the probability distribution of 
+\begin_inset Formula $m$
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Standard
+Let us assume there is a prior distribution 
+\begin_inset Formula $p(m)$
+\end_inset
+
+ for the slopes.
+ Then, by Bayes theorem, we have
+\begin_inset Formula 
+\begin{align*}
+p(y,m|x)=p(y|x,m)\,p(m) & =p(m|x,y)\,p(y).
+\end{align*}
+
+\end_inset
+
+Rearranged yields
+\begin_inset Formula 
+\begin{align*}
+p(m|x,y) & =\frac{p(y|x,m)\,p(m)}{p(y|x)}.
+\end{align*}
+
+\end_inset
+
+The denominator can be written as the marginalization
+\begin_inset Formula 
+\begin{align}
+p(y|x) & =\int dm\,p(y,m|x)\label{eq:p_y_given_x}\\
+ & =\int dm\,p(y|x,m)\,p(m).\nonumber 
+\end{align}
+
+\end_inset
+
+If we are not interested in the normalization, we can as well just consider
+\begin_inset Formula 
+\begin{align*}
+p(y|x) & \propto p(y|x,m)\,p(m)\\
+ & \propto\exp\big(-\sum_{i=1}^{n}\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big)\,p(m).
+\end{align*}
+
+\end_inset
+
+The maximum probability is achieved at the stationary point with regard
+ to 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ Due to the monotonicity of 
+\begin_inset Formula $\ln$
+\end_inset
+
+, we may also maximize the log probability which is
+\begin_inset Formula 
+\begin{align}
+\mathcal{L}(m):= & p(y|x)=C-\sum_{i=1}^{n}\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}+\ln p(m),\label{eq:loss}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $C$
+\end_inset
+
+ is a constant containing 
+\begin_inset Formula $-\ln\,p(y|x)$
+\end_inset
+
+.
+ The stationary point with regard to 
+\begin_inset Formula $m$
+\end_inset
+
+ is thus
+\begin_inset Formula 
+\begin{align*}
+0 & \stackrel{!}{=}\mathcal{L}^{\prime}(m)\\
+ & =-\frac{1}{\sigma^{2}}m\,\sum_{i=1}^{n}x_{i}^{2}+\frac{1}{\sigma^{2}}\sum_{i=1}^{n}\,y_{i}x_{i}+\frac{p^{\prime}(m)}{p(m)}.
+\end{align*}
+
+\end_inset
+
+For the flat prior 
+\begin_inset Formula $p(m)=\mathrm{const.}$
+\end_inset
+
+ this reduces to ordinary least squares
+\begin_inset Formula 
+\begin{align*}
+m^{\ast} & =\frac{\sum_{i=1}^{n}\,y_{i}x_{i}}{\sum_{i=1}^{n}x_{i}^{2}}.
+\end{align*}
+
+\end_inset
+
+This result is clear, because in this case 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:loss"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ takes the form of a quadratic loss function, the sum of quadratic residual
+ errors, that is minimized by the least squares solution.
+\end_layout
+
+\begin_layout Section
+Flat prior
+\end_layout
+
+\begin_layout Standard
+Let us assume a flat prior, hence 
+\begin_inset Formula $p(m)=c$
+\end_inset
+
+.
+ Then integral 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:p_y_given_x"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ then evaluates to
+\begin_inset Formula 
+\begin{align*}
+p(y|x) & =c\,\int_{-\infty}^{\infty}dm\,p(y|x,m)\\
+ & =c\,\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,\int_{-\infty}^{\infty}\,\exp\big(-\sum_{i=1}^{n}\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big)\,dm\\
+ & =c\,\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,\int_{-\infty}^{\infty}\,\exp\big(-\frac{1}{2}m^{2}\frac{\sum_{i=1}^{n}x_{i}^{2}}{\sigma^{2}}+m\,\frac{\sum_{i=1}^{n}x_{i}y}{\sigma^{2}}-\frac{\sum_{i=1}^{n}y_{i}^{2}}{2\sigma^{2}}\big)\,dm\\
+ & =c\,\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,(2\pi\,\frac{\sigma^{2}}{2\sum_{i=1}^{n}x_{i}^{2}})^{\frac{1}{2}}\,\exp\big(\frac{\sigma^{2}}{2\sum_{i=1}^{n}x_{i}^{2}}\,\Big(\frac{\sum_{i=1}^{n}x_{i}y}{\sigma^{2}}\Big)^{2}-\frac{\sum_{i=1}^{n}y_{i}^{2}}{2\sigma^{2}}\big).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
