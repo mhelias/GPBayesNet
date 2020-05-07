@@ -110,7 +110,7 @@ where
  distribution
 \begin_inset Formula 
 \begin{align*}
-p(y_{i}|x_{i},m) & =\N(y_{i};\,m\,x_{i},\sigma^{2})=\frac{1}{\sqrt{2\pi}\sigma}\,\exp\big(-\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big).
+p_{1}(y_{i}|x_{i},m) & =\N(y_{i};\,m\,x_{i},\sigma^{2})=\frac{1}{\sqrt{2\pi}\sigma}\,\exp\big(-\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big).
 \end{align*}
 
 \end_inset
@@ -127,7 +127,7 @@ The joint distribution of all points, due to the i.i.d.
 , so
 \begin_inset Formula 
 \begin{align*}
-p(y|x,m) & =\prod_{i=1}^{n}\,p(y_{i}|x_{i},m)\\
+p_{n}(y|x,m): & =\prod_{i=1}^{n}\,p_{1}(y_{i}|x_{i},m)\\
  & =\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,\exp\big(-\sum_{i=1}^{n}\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big).
 \end{align*}
 
@@ -153,16 +153,16 @@ Let us assume there is a prior distribution
  Then, by Bayes theorem, we have
 \begin_inset Formula 
 \begin{align*}
-p(y,m|x)=p(y|x,m)\,p(m) & =p(m|x,y)\,p(y).
+p(y,m|x)=p_{n}(y|x,m)\,p(m) & =p(m|x,y)\,p(y).
 \end{align*}
 
 \end_inset
 
 Rearranged yields
 \begin_inset Formula 
-\begin{align*}
-p(m|x,y) & =\frac{p(y|x,m)\,p(m)}{p(y|x)}.
-\end{align*}
+\begin{align}
+p(m|x,y) & =\frac{p_{n}(y|x,m)\,p(m)}{p(y|x)}.\label{eq:p_models_posterior}
+\end{align}
 
 \end_inset
 
@@ -170,15 +170,20 @@ The denominator can be written as the marginalization
 \begin_inset Formula 
 \begin{align}
 p(y|x) & =\int dm\,p(y,m|x)\label{eq:p_y_given_x}\\
- & =\int dm\,p(y|x,m)\,p(m).\nonumber 
+ & =\int dm\,p_{n}(y|x,m)\,p(m).\nonumber 
 \end{align}
 
 \end_inset
 
-If we are not interested in the normalization, we can as well just consider
+If we are not interested in the normalization of the distribution over different
+ 
+\begin_inset Formula $m$
+\end_inset
+
+, we can as well just consider
 \begin_inset Formula 
 \begin{align*}
-p(y|x) & \propto p(y|x,m)\,p(m)\\
+p(m|x,y) & \propto p_{n}(y|x,m)\,p(m)\\
  & \propto\exp\big(-\sum_{i=1}^{n}\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big)\,p(m).
 \end{align*}
 
@@ -251,7 +256,94 @@ noprefix "false"
 \end_layout
 
 \begin_layout Section
-Flat prior
+Prediction
+\end_layout
+
+\begin_layout Standard
+What is the prediction for 
+\begin_inset Formula $y^{\ast}$
+\end_inset
+
+ provided by the model for a new, given data point 
+\begin_inset Formula $x^{\ast}$
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Standard
+We obtain the probability distribution for 
+\begin_inset Formula $y^{\ast}$
+\end_inset
+
+ as
+\begin_inset Formula 
+\begin{align*}
+p(y^{\ast}|x^{\ast}) & =\int p(y^{\ast}|x^{\ast},m)\,p(m|x,y)\,dm,
+\end{align*}
+
+\end_inset
+
+where we integrate over all models, hence all 
+\begin_inset Formula $m$
+\end_inset
+
+, weighted by their respective probabilities 
+\begin_inset Formula $p(m|x,y)$
+\end_inset
+
+, which depends on the training data 
+\begin_inset Formula $(x,y)$
+\end_inset
+
+.
+ Inserting 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:p_models_posterior"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ we get
+\begin_inset Formula 
+\begin{align*}
+p(y^{\ast}|x^{\ast}) & =\frac{1}{p(y|x)}\,\int p_{1}(y_{\ast}|x_{\ast},m)\,p_{n}(y|x,m)\,p(m)\,dm.
+\end{align*}
+
+\end_inset
+
+The product 
+\begin_inset Formula $p_{1}(y_{\ast}|x_{\ast},m)\,p(y|x,m)$
+\end_inset
+
+ can be combined into a single Gaussian distribution
+\begin_inset Formula 
+\begin{align*}
+p_{1}(y_{\ast}|x_{\ast},m)\,p(y|x,m) & =p_{n+1}((y_{\ast},y)|(x_{\ast},x),m),
+\end{align*}
+
+\end_inset
+
+so
+\begin_inset Formula 
+\begin{align*}
+p(y^{\ast}|x^{\ast}) & =\frac{1}{p(y|x)}\,\int\,p_{n+1}((y_{\ast},y)|(x_{\ast},x),m)\,p(m)\,dm.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Explicit calculation of 
+\begin_inset Formula $p(y)$
+\end_inset
+
+ for a flat prior
 \end_layout
 
 \begin_layout Standard
@@ -273,10 +365,10 @@ noprefix "false"
  then evaluates to
 \begin_inset Formula 
 \begin{align*}
-p(y|x) & =c\,\int_{-\infty}^{\infty}dm\,p(y|x,m)\\
+p(y|x) & =c\,\int_{-\infty}^{\infty}dm\,p_{n}(y|x,m)\\
  & =c\,\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,\int_{-\infty}^{\infty}\,\exp\big(-\sum_{i=1}^{n}\frac{(y_{i}-mx_{i})^{2}}{2\sigma^{2}}\big)\,dm\\
- & =c\,\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,\int_{-\infty}^{\infty}\,\exp\big(-\frac{1}{2}m^{2}\frac{\sum_{i=1}^{n}x_{i}^{2}}{\sigma^{2}}+m\,\frac{\sum_{i=1}^{n}x_{i}y}{\sigma^{2}}-\frac{\sum_{i=1}^{n}y_{i}^{2}}{2\sigma^{2}}\big)\,dm\\
- & =c\,\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,(2\pi\,\frac{\sigma^{2}}{2\sum_{i=1}^{n}x_{i}^{2}})^{\frac{1}{2}}\,\exp\big(\frac{\sigma^{2}}{2\sum_{i=1}^{n}x_{i}^{2}}\,\Big(\frac{\sum_{i=1}^{n}x_{i}y}{\sigma^{2}}\Big)^{2}-\frac{\sum_{i=1}^{n}y_{i}^{2}}{2\sigma^{2}}\big).
+ & =c\,\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,\int_{-\infty}^{\infty}\,\exp\big(-\frac{1}{2}m^{2}\frac{\sum_{i=1}^{n}x_{i}^{2}}{\sigma^{2}}+m\,\frac{\sum_{i=1}^{n}x_{i}y_{i}}{\sigma^{2}}-\frac{\sum_{i=1}^{n}y_{i}^{2}}{2\sigma^{2}}\big)\,dm\\
+ & =c\,\frac{1}{(2\pi)^{\frac{n}{2}}\sigma^{n}}\,(2\pi\,\frac{\sigma^{2}}{2\sum_{i=1}^{n}x_{i}^{2}})^{\frac{1}{2}}\,\exp\big(\frac{\sigma^{2}}{2\sum_{i=1}^{n}x_{i}^{2}}\,\Big(\frac{\sum_{i=1}^{n}x_{i}y_{i}}{\sigma^{2}}\Big)^{2}-\frac{\sum_{i=1}^{n}y_{i}^{2}}{2\sigma^{2}}\big).
 \end{align*}
 
 \end_inset
