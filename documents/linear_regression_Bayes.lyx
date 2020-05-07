@@ -279,7 +279,7 @@ We obtain the probability distribution for
  as
 \begin_inset Formula 
 \begin{align*}
-p(y^{\ast}|x^{\ast}) & =\int p(y^{\ast}|x^{\ast},m)\,p(m|x,y)\,dm,
+p(y^{\ast}|x^{\ast}) & =\int p_{1}(y^{\ast}|x^{\ast},m)\,p(m|x,y)\,dm,
 \end{align*}
 
 \end_inset
