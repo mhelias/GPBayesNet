@@ -136,7 +136,7 @@ Network dynamics of a network of
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align}
-h_{i}(t+t) & =\sum_{j}w_{ij}\phi(x_{j}(t))-\tilde{j}_{i}(t),\label{eq:input_h}
+h_{i}(t+1) & =\sum_{j}w_{ij}\phi(x_{j}(t))-\tilde{j}_{i}(t),\label{eq:input_h}
 \end{align}
 
 \end_inset
@@ -423,7 +423,7 @@ We thus need to compute the iteration
 \begin_inset Formula 
 \begin{align*}
 \text{for }t=1:\quad q(t+1) & =\begin{cases}
-g^{2}\,\phi(x)\phi(x) & \text{for }t=0\\
+g^{2}\,N^{-1}\sum_{i=1}^{N}\,\phi(x_{i})\phi(x_{i}) & \text{for }t=0\\
 g^{2}\,\langle\phi(h)\phi(h)\rangle_{h\sim\N(0,q(t))} & \text{for }t>0
 \end{cases}.
 \end{align*}
@@ -494,7 +494,7 @@ where
 \begin_inset Formula 
 \begin{align}
 K_{xx^{\prime}}(t+1) & =\begin{cases}
-g^{2}\phi(x)\phi(x^{\prime}) & \text{for }t=0\\
+\frac{g^{2}}{N}\sum_{i}\phi(x_{i})\phi(x_{i}^{\prime}) & \text{for }t=0\\
 g^{2}\langle\phi(h)\phi(h)\rangle_{h\sim\N(0,K_{xx^{\prime}}(t))} & \text{for }t>0
 \end{cases}.\label{eq:iteration_different_inputs}
 \end{align}
@@ -504,11 +504,11 @@ g^{2}\langle\phi(h)\phi(h)\rangle_{h\sim\N(0,K_{xx^{\prime}}(t))} & \text{for }t
 This iteration can be derived from the replica calculation, starting from
  the moment-generating function 
 \begin_inset Formula 
-\begin{align*}
-Z[j^{(1)},j^{(2)}](w) & =\int\D h^{(1)}\,\int\D h^{(2)}\,\delta\big[h^{(1)}(\circ+1)-w\phi(h^{(1)}(\circ))+\tj^{(1)}(\circ)\big]\\
- & \times\,\delta\big[h^{(2)}(\circ+1)-w\phi(h^{(2)}(\circ))+\tj^{(2)}(\circ)\big]\\
- & \exp(j^{(1)\T}h^{(1)}+j^{(2)\T}h^{(2)}),
-\end{align*}
+\begin{align}
+Z[j^{(1)},j^{(2)},\tj^{(1)},\tj^{(2)}](w) & =\int\D h^{(1)}\,\int\D h^{(2)}\,\delta\big[h^{(1)}(\circ+1)-w\phi(h^{(1)}(\circ))+\tj^{(1)}(\circ)\big]\label{eq:gen_fctnl_pair}\\
+ & \times\,\delta\big[h^{(2)}(\circ+1)-w\phi(h^{(2)}(\circ))+\tj^{(2)}(\circ)\big]\nonumber \\
+ & \exp(j^{(1)\T}h^{(1)}+j^{(2)\T}h^{(2)}),\nonumber 
+\end{align}
 
 \end_inset
 
@@ -628,7 +628,7 @@ But the latter integral is just the joint distribution of the output for
  the training data and the test point
 \begin_inset Formula 
 \begin{align*}
-p(y_{\ast},y|x^{\ast},x) & =\int\,\delta(y_{\ast}-f_{w}(x_{\ast}))\,\delta(y-f_{w}(x))\,p(w)\,dw.
+p(y_{\ast},y|x_{\ast},x) & =\int\,\delta(y_{\ast}-f_{w}(x_{\ast}))\,\delta(y-f_{w}(x))\,p(w)\,dw.
 \end{align*}
 
 \end_inset
@@ -706,10 +706,10 @@ So we read off the mean and variance from the last line as (similar as in
  Lee 2017, eq.
  (8), (9); they have some readout noise in addition)
 \begin_inset Formula 
-\begin{align*}
-\mu_{y^{\ast}} & =K_{\ast D}K_{DD}^{-1}y,\\
-\sigma_{y^{\ast}}^{2} & =(K^{-1})_{\ast\ast}^{-1}=K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast}.
-\end{align*}
+\begin{align}
+\mu_{y^{\ast}} & =K_{\ast D}K_{DD}^{-1}y,\label{eq:mu_sigma_output}\\
+\sigma_{y^{\ast}}^{2} & =(K^{-1})_{\ast\ast}^{-1}=K_{\ast\ast}-K_{\ast D}K_{DD}^{-1}K_{D\ast}.\nonumber 
+\end{align}
 
 \end_inset
 
@@ -799,6 +799,295 @@ where we performed the integral over
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Using the replica approach for classification of Gaussian mixtures
+\end_layout
+
+\begin_layout Standard
+For the Bayesian prediction, we need the joint probability of the output,
+ given the output for the training data has been fixed.
+ We would like to present a sequence 
+\begin_inset Formula $x_{1},\ldots,x_{D}$
+\end_inset
+
+ of training data of length 
+\begin_inset Formula $D$
+\end_inset
+
+ and fix the output of the network for each such sample.
+ We then predict the output for one unknown data point 
+\begin_inset Formula $x_{\ast}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Using a the generating functional similar to 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:gen_fctnl_pair"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+Z[j^{(1)},j^{(2)},\tj^{(1)},\tj^{(2)}](w) & =\int\D h^{(1)}\,\int\D h^{(2)}\,\delta\big[h^{(1)}(\circ+1)-w\phi(h^{(1)}(\circ))+\tj^{(1)}(\circ)\big]\label{eq:gen_fctnl_pair-1}\\
+ & \times\,\delta\big[h^{(2)}(\circ+1)-w\phi(h^{(2)}(\circ))+\tj^{(2)}(\circ)\big]\nonumber \\
+ & \exp(j^{(1)\T}h^{(1)}+j^{(2)\T}h^{(2)}),\nonumber 
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+but having one replicon per data point 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let us draw the samples from a binary Gaussian mixture 
+\begin_inset Formula $x\sim\N(\mu_{\pm},\Sigma)$
+\end_inset
+
+, where the classes differ by the mean 
+\begin_inset Formula $\mu_{\pm}=\pm\mu_{0}$
+\end_inset
+
+.
+ In the initial step of the iteration 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:iteration_different_inputs"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ we thus need to compute
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+K_{xx^{\prime}}(1) & =g^{2}N^{-1}\sum_{i=1}^{N}\phi(x_{i})\phi(x_{i}^{\prime}),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $x\sim\N(\pm\mu_{0},\Sigma)$
+\end_inset
+
+ and 
+\begin_inset Formula $x^{\prime}\sim\N(\pm\mu_{0},\Sigma)$
+\end_inset
+
+.
+ Since we have a sum over a large number 
+\begin_inset Formula $N$
+\end_inset
+
+ of components, we expect this correlation to be self-averaging.
+ This means that we expect 
+\begin_inset Formula $K_{xx^{\prime}}(1)$
+\end_inset
+
+ to only on the class 
+\begin_inset Formula $x$
+\end_inset
+
+, 
+\begin_inset Formula $x^{\prime}$
+\end_inset
+
+ belong to, replacing
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+K_{xx^{\prime}}(1) & \simeq\begin{cases}
+K_{++} & x\in+,x^{\prime}\in+\\
+K_{+-} & x\in+,x^{\prime}\in-\\
+K_{-+} & x\in-,x^{\prime}\in+\\
+K_{--} & x\in-,x^{\prime}\in-,
+\end{cases}
+\end{align*}
+
+\end_inset
+
+where
+\begin_inset Formula 
+\begin{align*}
+K_{pq} & =g^{2}\,\langle\phi(x)\phi(x^{\prime})\rangle_{x\sim\N(\mu_{p},\Sigma),\,x^{\prime}\sim\N(\mu_{q},\Sigma)}.
+\end{align*}
+
+\end_inset
+
+In this approximation the matrix 
+\begin_inset Formula $K_{DD}$
+\end_inset
+
+ becomes highly symmetric.
+\end_layout
+
+\begin_layout Itemize
+TODO: check how good this approximation is
+\end_layout
+
+\begin_layout Standard
+Propagating the covariance by 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:iteration_different_inputs"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ then must yield nearly identical correlation functions at the end at time
+ 
+\begin_inset Formula $t=T$
+\end_inset
+
+ of the iteration.
+\end_layout
+
+\begin_layout Standard
+We may therefore sort the entries in this matrix into a 
+\begin_inset Formula $2\times2$
+\end_inset
+
+ block form, according to where the inputs came from.
+ The entries in each block are then approximately the same, so it takes
+ the form
+\begin_inset Formula 
+\begin{align}
+K_{DD} & =\left(\begin{array}{cc}
+K_{++}(T) & K_{+-}(T)\\
+K_{-+}(T) & K_{--}(T)
+\end{array}\right),\label{eq:K_DD_explicit}
+\end{align}
+
+\end_inset
+
+where each entry 
+\begin_inset Formula $K_{pq}(T)$
+\end_inset
+
+ is a matrix of dimension 
+\begin_inset Formula $D/2\times D/2$
+\end_inset
+
+ (if the two classes come with equal probability).
+\end_layout
+
+\begin_layout Standard
+Due to the block-diagonal form with blocks of equal entries, the matrix
+ has only rank 
+\begin_inset Formula $2$
+\end_inset
+
+ – there are only two linearly independent lines.
+ It is therefore not invertible.
+ However, to compute the mean output for the new data-point, we need to
+ evaluate 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:mu_sigma_output"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\mu_{y^{\ast}} & =K_{\ast D}K_{DD}^{-1}y.
+\end{align*}
+
+\end_inset
+
+The vector 
+\begin_inset Formula $y$
+\end_inset
+
+ here contains the training outputs.
+ This vector, too, has the same blockwise form, because we have sorted the
+ training data according to their labels 
+\begin_inset Formula $+$
+\end_inset
+
+, 
+\begin_inset Formula $-$
+\end_inset
+
+.
+ If we write the latter part of the last equation in implicit form
+\begin_inset Formula 
+\begin{align*}
+K_{DD}\,a & =y,
+\end{align*}
+
+\end_inset
+
+we hence only get two different lines
+\begin_inset Formula 
+\begin{align*}
+K_{++}(T)\,a_{+}+K_{+-}(T)\,a_{-} & =+1,\\
+K_{-+}(T)\,a_{+}+K_{--}(T)\,a_{-} & =-1,
+\end{align*}
+
+\end_inset
+
+which shows that the entries in the vector 
+\begin_inset Formula $a$
+\end_inset
+
+ also take the same values within each block.
+ So in effect, we may regard the matrix 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:K_DD_explicit"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ as a 
+\begin_inset Formula $2\times2$
+\end_inset
+
+ matrix.
+ The same holds for the matrix 
+\begin_inset Formula $K_{\ast D}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
